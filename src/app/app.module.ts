@@ -19,11 +19,13 @@ import {
     MatToolbarModule
 } from '@angular/material';
 
-import {AgGridModule} from 'ag-grid-angular';
-import {AgGridMaterialTextEditorComponent} from './ag-grid-material-text-editor/ag-grid-material-text-editor.component';
-import {AgGridMaterialSelectEditorComponent} from './ag-grid-material-select-editor/ag-grid-material-select-editor.component';
-import {AgGridMaterialCheckboxCellComponent} from './ag-grid-material-checkbox-cell/ag-grid-material-checkbox-cell.component';
+import { AgGridModule } from 'ag-grid-angular';
+import { AgGridMaterialTextEditorComponent } from './ag-grid-material-text-editor/ag-grid-material-text-editor.component';
+import { AgGridMaterialSelectEditorComponent } from './ag-grid-material-select-editor/ag-grid-material-select-editor.component';
+import { AgGridMaterialCheckboxCellComponent } from './ag-grid-material-checkbox-cell/ag-grid-material-checkbox-cell.component';
 import { AgGridMaterialTextareaEditorComponent } from './ag-grid-material-textarea-editor/ag-grid-material-textarea-editor.component';
+import { StoreModule } from '@ngrx/store';
+import { appReducer } from './store/app.reducer';
 
 @NgModule({
     declarations: [
@@ -52,7 +54,8 @@ import { AgGridMaterialTextareaEditorComponent } from './ag-grid-material-textar
             AgGridMaterialSelectEditorComponent,
             AgGridMaterialCheckboxCellComponent,
             AgGridMaterialTextareaEditorComponent
-        ])
+        ]),
+        StoreModule.forRoot(appReducer)
     ],
     providers: [],
     bootstrap: [AppComponent]
