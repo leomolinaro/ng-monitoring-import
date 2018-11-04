@@ -1,0 +1,22 @@
+<mat-toolbar color="primary">
+  <mat-toolbar-row>
+  <span>Monitoring</span>
+  </mat-toolbar-row>
+</mat-toolbar>
+
+<mat-card id="grid-container">
+    <!-- <mat-card-title></mat-card-title> -->
+    <mat-card-content>
+        <ag-grid-angular style="width: 100%; height: 400px;"
+          class="ag-theme-material"
+          [gridOptions]="gridOptions"
+          [columnDefs]="columnDefs"
+          [rowData]="rowData">
+        </ag-grid-angular>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-button (click)="debug()">Debug</button>
+    </mat-card-actions>
+</mat-card>
+
+<router-outlet></router-outlet>
