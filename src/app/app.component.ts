@@ -1,5 +1,5 @@
-import { AppState } from './store/app.reducer';
-import { Host } from './models/host';
+import { HostsState } from './store/hosts.reducer';
+import { Host, hostTypes } from './models/host';
 import {Component} from '@angular/core';
 import {GridOptions} from 'ag-grid-community';
 import {AgGridMaterialTextEditorComponent} from './ag-grid-material-text-editor/ag-grid-material-text-editor.component';
@@ -9,7 +9,7 @@ import { AgGridMaterialTextareaEditorComponent } from './ag-grid-material-textar
 import { Observable, of } from 'rxjs';
 import { Store } from '@ngrx/store';
 
-import * as fromApp from './store/app.reducer';
+import * as fromHosts from './store/hosts.reducer';
 
 @Component({
     selector: 'app-root',
@@ -21,64 +21,30 @@ export class AppComponent {
   private gridOptions: GridOptions = <GridOptions>{
     enableSorting: true,
     rowSelection: 'multiple',
-    suppressRowClickSelection: true
+    suppressRowClickSelection: true,
+    rowHeight: 25,
+    animateRows: true
   };
   public hosts$: Observable<Host[]>;
   private columnDefs: any[];
 
-  constructor(private store: Store<AppState>) {
+  constructor(private store: Store<HostsState>) {
     this.columnDefs = [
-      {
-        headerName: 'IP',
-        field: 'ip',
-        editable: true,
-        cellEditorFramework: AgGridMaterialTextEditorComponent,
-        pinned: 'left'
-      },
-      {
-        headerName: 'Name',
-        field: 'name',
-        editable: true,
-        cellEditorFramework: AgGridMaterialTextEditorComponent,
-        pinned: 'left'
-      },
-      {
-        headerName: 'Type',
-        field: 'type',
-        editable: true,
-        cellEditorFramework: AgGridMaterialSelectEditorComponent,
-        pinned: 'left',
-        cellEditorParams: { values: ['AP', 'Router', 'Switch', 'TVCC', 'Server', 'WiFi Controller', 'Bridge Radio', 'UPS', 'Sensor', 'PABX', 'Firewall'] }
-      },
-      {
-        headerName: 'Description',
-        field: 'description',
-        editable: true,
-        cellEditorFramework: AgGridMaterialTextEditorComponent
-      },
-      {
-        headerName: 'Note',
-        field: 'note',
-        editable: true,
-        cellEditorFramework: AgGridMaterialTextareaEditorComponent
-      },
-      {
-        headerName: 'Basic',
-        field: 'basic',
-        cellRendererFramework: AgGridMaterialCheckboxCellComponent,
-        // width: 80
-      },
-      { headerName: 'Net basic', field: 'netBasic', cellRendererFramework: AgGridMaterialCheckboxCellComponent },
-      { headerName: 'Net medium', field: 'netMedium', cellRendererFramework: AgGridMaterialCheckboxCellComponent },
-      { headerName: 'Net interfaces', field: 'netInterfaces', cellRendererFramework: AgGridMaterialCheckboxCellComponent },
-      { headerName: 'STP', field: 'stp', cellRendererFramework: AgGridMaterialCheckboxCellComponent }
+      { headerName: 'IP',   field: 'ip',          editable: true, pinned: 'left', cellEditorFramework: AgGridMaterialTextEditorComponent },
+      { headerName: 'Name', field: 'name',        editable: true, pinned: 'left', cellEditorFramework: AgGridMaterialTextEditorComponent },
+      { headerName: 'Type', field: 'type',        editable: true, pinned: 'left', cellEditorFramework: AgGridMaterialSelectEditorComponent, cellEditorParams: { values: hostTypes } },
+      { headerName: 'Name', field: 'description', editable: true, pinned: null,   cellEditorFramework: AgGridMaterialTextEditorComponent },
+      { headerName: 'Note', field: 'note',        editable: true, pinned: null,   cellEditorFramework: AgGridMaterialTextEditorComponent },
+      { headerName: 'T1', field: 'template1',                                      cellRendererFramework: AgGridMaterialCheckboxCellComponent },
+      { headerName: 'T2', field: 'template2',                               cellRendererFramework: AgGridMaterialCheckboxCellComponent },
+      { headerName: 'T3', field: 'template3',                             cellRendererFramework: AgGridMaterialCheckboxCellComponent },
     ];
 
-    this.hosts$ = this.store.select(fromApp.selectHostList);
+    this.hosts$ = this.store.select(fromHosts.selectHosts);
   }
 
   debug() {
-    console.log(this.store.value);
+    // console.log(this.store.value);
   }
 
 }

@@ -1,17 +1,17 @@
-import { AppState } from './app.reducer';
-import { Host } from './../models/host';
+import { HostsState } from './hosts.reducer';
+import { Host } from '../models/host';
 
-import * as fromApp from './app.actions';
-import { createSelector } from '@ngrx/store';
+import * as fromHosts from './hosts.actions';
+import { createSelector, createFeatureSelector } from '@ngrx/store';
 
-export interface AppState {
-  hostIds: number[],
-  hosts: { [hostId: number]: Host }
+export interface HostsState {
+  ids: number[],
+  entities: { [hostId: number]: Host }
 }
 
-const initialState: AppState = {
-  hostIds: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25 ],
-  hosts: {
+const initialState: HostsState = {
+  ids: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25 ],
+  entities: {
     1: { id: 1,  ip: "10.10.10.251",   name: "Sonda Best monitoring",              type: "Server",           template1: true,  template2: false, template3: false, template1_macro1: "macro 1", template1_macro2: 2, template2_macro1: "macro 1", template3_macro1: "macro 1", template3_macro2: "macro 2", template3_macro3: "macro 3" },
     2: { id: 2,  ip: "10.10.20.233",   name: "Cisco_WLC",                          type: "WiFi Controller",  template1: false, template2: false, template3: false, template1_macro1: "macro 1", template1_macro2: 2, template2_macro1: "macro 1", template3_macro1: "macro 1", template3_macro2: "macro 2", template3_macro3: "macro 3" },
     3: { id: 3,  ip: "10.10.20.240",   name: "Cisco_WLC_2",                        type: "WiFi Controller",  template1: false, template2: false, template3: false, template1_macro1: "macro 1", template1_macro2: 2, template2_macro1: "macro 1", template3_macro1: "macro 1", template3_macro2: "macro 2", template3_macro3: "macro 3" },
@@ -40,52 +40,53 @@ const initialState: AppState = {
   }
 }
 
-export function appReducer(
+export function hostsReducer(
   state = initialState,
-  action: fromApp.AppAction
-): AppState {
+  action: fromHosts.HostsAction
+): HostsState {
   switch (action.type) {
-		case fromApp.ADD_HOST: {
+		case fromHosts.ADD_HOST: {
       const newHost = action.payload.host;
-      const maxHostId = Math.max(...state.hostIds);
+      const maxHostId = Math.max(...state.ids);
       const newHostId = maxHostId + 1;
       newHost.id = newHostId;
       return {
         ...state,
-        hostIds: [ ...state.hostIds, newHostId ],
-        hosts: { ...state.hosts, [newHostId]: newHost }
+        ids: [ ...state.ids, newHostId ],
+        entities: { ...state.entities, [newHostId]: newHost }
       }
 		}
-    case fromApp.REMOVE_HOST: {
+    case fromHosts.REMOVE_HOST: {
       const hostId = action.payload.hostId;
-      const idIndex = state.hostIds.indexOf(hostId);
+      const idIndex = state.ids.indexOf(hostId);
       if (idIndex >= 0) {
-        const { [hostId]: removedHost, ...remainingHosts } = state.hosts;
+        const { [hostId]: removedHost, ...remainingHosts } = state.entities;
         return {
           ...state,
-          hostIds: [ ...state.hostIds.slice (0, idIndex), ...state.hostIds.slice (idIndex + 1)],
-          hosts: remainingHosts
+          ids: [ ...state.ids.slice (0, idIndex), ...state.ids.slice (idIndex + 1)],
+          entities: remainingHosts
         }
       } else {
         return state;
       }
 		}
-		case fromApp.UPDATE_HOST: {
+		case fromHosts.UPDATE_HOST: {
       const hostId = action.payload.host.id;
       return {
         ...state,
-        hosts: { ...state.hosts, [hostId]: action.payload.host }
+        entities: { ...state.entities, [hostId]: action.payload.host }
       }
 		}
   }
   return state;
 }
 
-export const selectHostIds = (state: AppState) => state.hostIds;
-export const selectHosts = (state: AppState) => state.hosts;
+export const selectHostsState = createFeatureSelector<HostsState>("hosts");
 
-export const selectHostList = createSelector(
-  selectHostIds,
-  selectHosts,
-  (hostIds, hosts) => hostIds.map(hostId => hosts[hostId])
+export const selectHosts = createSelector(
+  selectHostsState,
+  state => state.ids.map(id => state.entities[id])
 );
+
+export const selectHostIds = createSelector(selectHostsState, (state: HostsState) => state.ids);
+export const selectHostEntities = createSelector(selectHostsState, (state: HostsState) => state.entities);

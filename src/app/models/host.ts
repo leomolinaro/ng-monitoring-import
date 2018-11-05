@@ -1,3 +1,5 @@
+export const hostTypes = ["AP", "Router", "Switch", "TVCC", "Server", "WiFi Controller", "Bridge Radio", "UPS", "Sensor", "PABX", "Firewall"];
+
 export interface Host {
   id: number,
   ip: string,
