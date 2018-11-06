@@ -1,7 +1,7 @@
 import { HostsState } from './store/hosts.reducer';
 import { Host, hostTypes } from './models/host';
 import {Component} from '@angular/core';
-import {GridOptions} from 'ag-grid-community';
+import {GridOptions, CellValueChangedEvent} from 'ag-grid-community';
 import {AgGridMaterialTextEditorComponent} from './ag-grid-material-text-editor/ag-grid-material-text-editor.component';
 import {AgGridMaterialSelectEditorComponent} from './ag-grid-material-select-editor/ag-grid-material-select-editor.component';
 import {AgGridMaterialCheckboxCellComponent} from './ag-grid-material-checkbox-cell/ag-grid-material-checkbox-cell.component';
@@ -23,10 +23,16 @@ export class AppComponent {
     rowSelection: 'multiple',
     suppressRowClickSelection: true,
     rowHeight: 25,
-    animateRows: true
+    animateRows: true,
+    onCellValueChanged: this.onCellValueChanged,
+    deltaRowDataMode: true
   };
   public hosts$: Observable<Host[]>;
   private columnDefs: any[];
+    
+  onCellValueChanged(event: CellValueChangedEvent) {
+    console.log("event", event);
+  }
 
   constructor(private store: Store<HostsState>) {
     this.columnDefs = [
