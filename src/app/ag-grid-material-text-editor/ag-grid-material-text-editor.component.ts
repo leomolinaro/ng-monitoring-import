@@ -52,6 +52,7 @@ export class AgGridMaterialTextEditorComponent implements OnInit, AgEditorCompon
   }
 
   getValue(): string {
+    console.log("this.value", this.value);
     return this.value;
   }
 

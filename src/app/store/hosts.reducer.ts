@@ -71,10 +71,14 @@ export function hostsReducer(
       }
 		}
 		case fromHosts.UPDATE_HOST: {
-      const hostId = action.payload.host.id;
+      const hostId = action.payload.updates.id;
+      const host = state.entities[hostId];
       return {
         ...state,
-        entities: { ...state.entities, [hostId]: action.payload.host }
+        entities: {
+          ...state.entities,
+          [hostId]: { ...host, ...action.payload.updates }
+        }
       }
 		}
   }
