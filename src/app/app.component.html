@@ -1,22 +1,33 @@
 <mat-toolbar color="primary">
   <mat-toolbar-row>
-  <span>Monitoring</span>
+  <span (click)="debug()">Monitoring</span>
   </mat-toolbar-row>
 </mat-toolbar>
 
-<mat-card id="grid-container">
-    <!-- <mat-card-title></mat-card-title> -->
-    <mat-card-content>
-        <ag-grid-angular style="width: 100%; height: 700px;"
-          class="ag-theme-material"
-          [gridOptions]="gridOptions"
-          [columnDefs]="columnDefs"
-          [rowData]="hosts$ | async">
-        </ag-grid-angular>
-    </mat-card-content>
-    <mat-card-actions>
-      <button mat-button (click)="debug()">Debug</button>
-    </mat-card-actions>
-</mat-card>
+
+
+<mat-accordion>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        General
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <ag-grid-angular style="width: 100%; height: 700px;"
+      class="ag-theme-material"
+      [gridOptions]="gridOptions"
+      [columnDefs]="columnDefs"
+      [rowData]="hosts$ | async">
+    </ag-grid-angular>
+  </mat-expansion-panel>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Template 1
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <p>I'm visible because I am open</p>
+  </mat-expansion-panel>
+</mat-accordion>
 
 <router-outlet></router-outlet>

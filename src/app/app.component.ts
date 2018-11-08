@@ -7,6 +7,7 @@ import {AgGridMaterialSelectEditorComponent} from './ag-grid-material-select-edi
 import {AgGridMaterialCheckboxCellComponent} from './ag-grid-material-checkbox-cell/ag-grid-material-checkbox-cell.component';
 import { AgGridMaterialTextareaEditorComponent } from './ag-grid-material-textarea-editor/ag-grid-material-textarea-editor.component';
 import { Observable, of } from 'rxjs';
+import { take } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 
 import * as fromHosts from './store/hosts.reducer';
@@ -27,33 +28,28 @@ export class AppComponent {
     suppressRowClickSelection: true,
     rowHeight: 25,
     animateRows: true,
-    onCellValueChanged: (event: CellValueChangedEvent) => this.dispatchUpdate(event),
+    // onCellValueChanged: (event: CellValueChangedEvent) => this.dispatchUpdate(event),
     deltaRowDataMode: true,
     getRowNodeId: row => row.id
   };
   public hosts$: Observable<Host[]>;
   private columnDefs: ColDef[];
   
-  dispatchUpdate(event: CellValueChangedEvent) {
-    const field = event.colDef.field;
-    const value = event.newValue;
-    const host: Host = event.data;
+  valueSetter(params: ValueSetterParams): boolean {
+    const field = params.colDef.field;
+    const value = params.newValue;
+    const host: Host = params.data;
     const hostId = host.id;
     this.store.dispatch(new UpdateHost({ updates: { id: hostId, [field]: value } }));
-    console.log("event", event);
-  }
-
-  hasChanged(params: ValueSetterParams): boolean {
-    console.log(params)
     return params.oldValue != params.newValue;
   }
 
   constructor(private store: Store<HostsState>) {
 
-    const stringColDef =      { cellEditorFramework: AgGridMaterialTextEditorComponent,     valueSetter: (params) => this.hasChanged(params) };
-    const longStringColDef =  { cellEditorFramework: AgGridMaterialTextEditorComponent,     valueSetter: (params) => this.hasChanged(params) };
-    const selectColDef =      { cellEditorFramework: AgGridMaterialSelectEditorComponent,   valueSetter: (params) => this.hasChanged(params) };
-    const booleanColDef =     { cellRendererFramework: AgGridMaterialCheckboxCellComponent, valueSetter: (params) => this.hasChanged(params) };
+    const stringColDef =      { cellEditorFramework: AgGridMaterialTextEditorComponent,     valueSetter: (params) => this.valueSetter(params) };
+    const longStringColDef =  { cellEditorFramework: AgGridMaterialTextEditorComponent,     valueSetter: (params) => this.valueSetter(params) };
+    const selectColDef =      { cellEditorFramework: AgGridMaterialSelectEditorComponent,   valueSetter: (params) => this.valueSetter(params) };
+    const booleanColDef =     { cellRendererFramework: AgGridMaterialCheckboxCellComponent, valueSetter: (params) => this.valueSetter(params) };
 
     this.columnDefs = [
       { headerName: 'IP',           field: 'ip',          editable: true,   pinned: 'left', ...stringColDef },
@@ -70,7 +66,10 @@ export class AppComponent {
   }
 
   debug() {
-    // console.log(this.store.value);
+    this.store.select(fromHosts.selectHosts).pipe(
+      take(1)
+    )
+    .subscribe(console.log);
   }
 
 }

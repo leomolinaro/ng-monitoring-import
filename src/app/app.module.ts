@@ -8,15 +8,16 @@ import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 // material components
 import {
-    MatButtonModule,
-    MatCardModule,
-    MatCheckboxModule,
-    MatDatepickerModule,
-    MatIconModule,
-    MatInputModule,
-    MatNativeDateModule,
-    MatSelectModule,
-    MatToolbarModule
+  MatButtonModule,
+  MatCardModule,
+  MatCheckboxModule,
+  MatDatepickerModule,
+  MatIconModule,
+  MatInputModule,
+  MatNativeDateModule,
+  MatSelectModule,
+  MatToolbarModule,
+  MatExpansionModule
 } from '@angular/material';
 
 import { AgGridModule } from 'ag-grid-angular';
@@ -49,6 +50,7 @@ import { hostsReducer } from './store/hosts.reducer';
         MatSelectModule,
         MatDatepickerModule,
         MatNativeDateModule,
+        MatExpansionModule,
         AgGridModule.withComponents([
             AgGridMaterialTextEditorComponent,
             AgGridMaterialSelectEditorComponent,
