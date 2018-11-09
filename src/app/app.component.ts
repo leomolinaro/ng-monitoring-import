@@ -1,19 +1,31 @@
 import { HostsState } from './store/hosts.reducer';
 import { Host, hostTypes } from './models/host';
 import {Component} from '@angular/core';
-import {GridOptions, CellValueChangedEvent, ColDef, ValueSetterParams} from 'ag-grid-community';
+import {GridOptions, ColDef, ValueSetterParams} from 'ag-grid-community';
 import {AgGridMaterialTextEditorComponent} from './ag-grid-material-text-editor/ag-grid-material-text-editor.component';
 import {AgGridMaterialSelectEditorComponent} from './ag-grid-material-select-editor/ag-grid-material-select-editor.component';
 import {AgGridMaterialCheckboxCellComponent} from './ag-grid-material-checkbox-cell/ag-grid-material-checkbox-cell.component';
-import { AgGridMaterialTextareaEditorComponent } from './ag-grid-material-textarea-editor/ag-grid-material-textarea-editor.component';
-import { Observable, of } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { take, filter, map } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 
 import * as fromHosts from './store/hosts.reducer';
-import { AgGridColumn } from 'ag-grid-angular';
 import { UpdateHost } from './store/hosts.actions';
 
+const gridOptions: GridOptions = {
+  enableSorting: true,
+  rowSelection: 'multiple',
+  suppressRowClickSelection: true,
+  rowHeight: 25,
+  animateRows: true,
+  // onCellValueChanged: (event: CellValueChangedEvent) => this.dispatchUpdate(event),
+  deltaRowDataMode: true,
+  getRowNodeId: row => row.id
+};
+const colDefString: ColDef =      { cellEditorFramework: AgGridMaterialTextEditorComponent,     valueSetter: (params) => this.valueSetter(params) };
+const colDefLongString: ColDef =  { cellEditorFramework: AgGridMaterialTextEditorComponent,     valueSetter: (params) => this.valueSetter(params) };
+const colDefSelect: ColDef =      { cellEditorFramework: AgGridMaterialSelectEditorComponent,   valueSetter: (params) => this.valueSetter(params) };
+const colDefBoolean: ColDef =     { cellRendererFramework: AgGridMaterialCheckboxCellComponent, valueSetter: (params) => this.valueSetter(params) };
 
 @Component({
     selector: 'app-root',
@@ -22,18 +34,12 @@ import { UpdateHost } from './store/hosts.actions';
 })
 export class AppComponent {
 
-  private gridOptions: GridOptions = <GridOptions>{
-    enableSorting: true,
-    rowSelection: 'multiple',
-    suppressRowClickSelection: true,
-    rowHeight: 25,
-    animateRows: true,
-    // onCellValueChanged: (event: CellValueChangedEvent) => this.dispatchUpdate(event),
-    deltaRowDataMode: true,
-    getRowNodeId: row => row.id
-  };
-  public hosts$: Observable<Host[]>;
-  private columnDefs: ColDef[];
+  gridOptionsAll = { ... gridOptions };
+  gridOptionsT1 = { ... gridOptions };
+  rowsAll$: Observable<Host[]>;
+  rowsT1$: Observable<Host[]>;
+  colDefsAll: ColDef[];
+  colDefsT1: ColDef[];
   
   valueSetter(params: ValueSetterParams): boolean {
     const field = params.colDef.field;
@@ -45,30 +51,27 @@ export class AppComponent {
   }
 
   constructor(private store: Store<HostsState>) {
-
-    const stringColDef =      { cellEditorFramework: AgGridMaterialTextEditorComponent,     valueSetter: (params) => this.valueSetter(params) };
-    const longStringColDef =  { cellEditorFramework: AgGridMaterialTextEditorComponent,     valueSetter: (params) => this.valueSetter(params) };
-    const selectColDef =      { cellEditorFramework: AgGridMaterialSelectEditorComponent,   valueSetter: (params) => this.valueSetter(params) };
-    const booleanColDef =     { cellRendererFramework: AgGridMaterialCheckboxCellComponent, valueSetter: (params) => this.valueSetter(params) };
-
-    this.columnDefs = [
-      { headerName: 'IP',           field: 'ip',          editable: true,   pinned: 'left', ...stringColDef },
-      { headerName: 'Name',         field: 'name',        editable: true,   pinned: 'left', ...stringColDef },
-      { headerName: 'Type',         field: 'type',        editable: true,   pinned: 'left', ...selectColDef, cellEditorParams: { values: hostTypes } },
-      { headerName: 'Description',  field: 'description', editable: true,   pinned: null,   ...stringColDef },
-      { headerName: 'Note',         field: 'note',        editable: true,   pinned: null,   ...longStringColDef },
-      { headerName: 'T1',           field: 'template1',   editable: false,  pinned: null,   ...booleanColDef },
-      { headerName: 'T2',           field: 'template2',   editable: false,  pinned: null,   ...booleanColDef },
-      { headerName: 'T3',           field: 'template3',   editable: false,  pinned: null,   ...booleanColDef },
+    this.colDefsAll = [
+      { headerName: 'IP',           field: 'ip',          editable: true,   pinned: 'left', ...colDefString },
+      { headerName: 'Name',         field: 'name',        editable: true,   pinned: 'left', ...colDefString },
+      { headerName: 'Type',         field: 'type',        editable: true,   pinned: 'left', ...colDefSelect, cellEditorParams: { values: hostTypes } },
+      { headerName: 'Description',  field: 'description', editable: true,   pinned: null,   ...colDefString },
+      { headerName: 'Note',         field: 'note',        editable: true,   pinned: null,   ...colDefLongString },
+      { headerName: 'T1',           field: 'template1',   editable: false,  pinned: null,   ...colDefBoolean },
+      { headerName: 'T2',           field: 'template2',   editable: false,  pinned: null,   ...colDefBoolean },
+      { headerName: 'T3',           field: 'template3',   editable: false,  pinned: null,   ...colDefBoolean },
     ];
-
-    this.hosts$ = this.store.select(fromHosts.selectHosts);
+    this.colDefsT1 = [
+      { headerName: 'IP',           field: 'ip',          editable: true,   pinned: 'left', ...colDefString },
+      { headerName: 'Name',         field: 'name',        editable: true,   pinned: 'left', ...colDefString },
+      { headerName: 'Type',         field: 'type',        editable: true,   pinned: 'left', ...colDefSelect, cellEditorParams: { values: hostTypes } }
+    ];
+    this.rowsAll$ = this.store.select(fromHosts.selectHosts);
+    this.rowsT1$ = this.rowsAll$.pipe(map(hosts => hosts.filter(host => host.template1)));
   }
 
   debug() {
-    this.store.select(fromHosts.selectHosts).pipe(
-      take(1)
-    )
+    this.store.select(fromHosts.selectHosts).pipe(take(1))
     .subscribe(console.log);
   }
 
