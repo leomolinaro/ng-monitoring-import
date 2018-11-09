@@ -27,6 +27,7 @@ import { AgGridMaterialCheckboxCellComponent } from './ag-grid-material-checkbox
 import { AgGridMaterialTextareaEditorComponent } from './ag-grid-material-textarea-editor/ag-grid-material-textarea-editor.component';
 import { StoreModule } from '@ngrx/store';
 import { hostsReducer } from './store/hosts.reducer';
+import { TemplateTableComponent } from './template-table/template-table.component';
 
 @NgModule({
     declarations: [
@@ -35,6 +36,7 @@ import { hostsReducer } from './store/hosts.reducer';
         AgGridMaterialSelectEditorComponent,
         AgGridMaterialCheckboxCellComponent,
         AgGridMaterialTextareaEditorComponent,
+        TemplateTableComponent,
     ],
     imports: [
         BrowserModule,

@@ -6,8 +6,8 @@
 
 
 
-<mat-accordion>
-  <mat-expansion-panel>
+<mat-accordion multi="true">
+  <mat-expansion-panel expanded="true">
     <mat-expansion-panel-header>
       <mat-panel-title>General</mat-panel-title>
     </mat-expansion-panel-header>
@@ -23,13 +23,19 @@
     <mat-expansion-panel-header>
       <mat-panel-title>Template 1</mat-panel-title>
     </mat-expansion-panel-header>
-    <ag-grid-angular
-      style="width: 100%; height: 700px;"
-      class="ag-theme-material"
-      [gridOptions]="gridOptionsT1"
-      [columnDefs]="colDefsT1"
-      [rowData]="rowsT1$ | async">
-    </ag-grid-angular>
+    <template-table [gridOptions]="gridOptionsT1" [colDefs]="colDefsT1" [rows]="rowsT1$ | async"></template-table>
+  </mat-expansion-panel>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Template 2</mat-panel-title>
+    </mat-expansion-panel-header>
+    <template-table [gridOptions]="gridOptionsT2" [colDefs]="colDefsT2" [rows]="rowsT2$ | async"></template-table>
+  </mat-expansion-panel>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Template 3</mat-panel-title>
+    </mat-expansion-panel-header>
+    <template-table [gridOptions]="gridOptionsT3" [colDefs]="colDefsT3" [rows]="rowsT3$ | async"></template-table>
   </mat-expansion-panel>
 </mat-accordion>
 
