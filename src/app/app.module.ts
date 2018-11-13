@@ -17,26 +17,29 @@ import {
   MatNativeDateModule,
   MatSelectModule,
   MatToolbarModule,
-  MatExpansionModule
+  MatExpansionModule, MatSidenavModule, MatListModule
 } from '@angular/material';
 
 import { AgGridModule } from 'ag-grid-angular';
-import { AgGridMaterialTextEditorComponent } from './ag-grid-material-text-editor/ag-grid-material-text-editor.component';
-import { AgGridMaterialSelectEditorComponent } from './ag-grid-material-select-editor/ag-grid-material-select-editor.component';
-import { AgGridMaterialCheckboxCellComponent } from './ag-grid-material-checkbox-cell/ag-grid-material-checkbox-cell.component';
-import { AgGridMaterialTextareaEditorComponent } from './ag-grid-material-textarea-editor/ag-grid-material-textarea-editor.component';
 import { StoreModule } from '@ngrx/store';
 import { hostsReducer } from './store/hosts.reducer';
-import { TemplateTableComponent } from './template-table/template-table.component';
+import { MonitoringComponent } from './components/monitoring/monitoring.component';
+import { LayoutModule } from '@angular/cdk/layout';
+import { TemplateTableComponent } from './components/template-table/template-table.component';
+import { CellCheckboxComponent } from './components/cell-checkbox/cell-checkbox.component';
+import { CellInputComponent } from './components/cell-input/cell-input.component';
+import { CellTextAreaComponent } from './components/cell-text-area/cell-text-area.component';
+import { CellSelectComponent } from './components/cell-select/cell-select.component';
 
 @NgModule({
     declarations: [
         AppComponent,
-        AgGridMaterialTextEditorComponent,
-        AgGridMaterialSelectEditorComponent,
-        AgGridMaterialCheckboxCellComponent,
-        AgGridMaterialTextareaEditorComponent,
         TemplateTableComponent,
+        MonitoringComponent,
+        CellCheckboxComponent,
+        CellInputComponent,
+        CellTextAreaComponent,
+        CellSelectComponent,
     ],
     imports: [
         BrowserModule,
@@ -54,12 +57,15 @@ import { TemplateTableComponent } from './template-table/template-table.componen
         MatNativeDateModule,
         MatExpansionModule,
         AgGridModule.withComponents([
-            AgGridMaterialTextEditorComponent,
-            AgGridMaterialSelectEditorComponent,
-            AgGridMaterialCheckboxCellComponent,
-            AgGridMaterialTextareaEditorComponent
+          CellCheckboxComponent,
+          CellInputComponent,
+          CellTextAreaComponent,
+          CellSelectComponent
         ]),
-        StoreModule.forRoot({ hosts: hostsReducer })
+        StoreModule.forRoot({ hosts: hostsReducer }),
+        LayoutModule,
+        MatSidenavModule,
+        MatListModule
     ],
     providers: [],
     bootstrap: [AppComponent]

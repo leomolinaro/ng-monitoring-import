@@ -2,13 +2,13 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { AgRendererComponent } from "ag-grid-angular/main";
 import { ICellRendererParams } from "ag-grid-community";
 import { MatCheckbox, MatCheckboxChange } from '@angular/material';
-import {GridOptions, ColDef, ValueSetterParams} from 'ag-grid-community';
 
 @Component({
-  selector: 'app-ag-grid-material-checkbox-cell',
-  template: `<mat-checkbox #checkbox (change)="toggleSelection($event)" [checked]="checked"></mat-checkbox>`
+  selector: 'app-cell-checkbox',
+  templateUrl: './cell-checkbox.component.html',
+  styleUrls: ['./cell-checkbox.component.scss']
 })
-export class AgGridMaterialCheckboxCellComponent implements OnInit, AgRendererComponent {
+export class CellCheckboxComponent implements OnInit, AgRendererComponent {
     
   @ViewChild('checkbox', {read: MatCheckbox}) checkbox: MatCheckbox;
 

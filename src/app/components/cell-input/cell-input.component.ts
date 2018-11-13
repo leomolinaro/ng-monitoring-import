@@ -4,11 +4,11 @@ import {AgEditorComponent,} from 'ag-grid-angular';
 import {MatInput} from '@angular/material';
 
 @Component({
-    selector: 'app-ag-grid-material-text-editor',
-    templateUrl: './ag-grid-material-text-editor.component.html',
-    styleUrls: ['./ag-grid-material-text-editor.component.scss']
+  selector: 'app-cell-input',
+  templateUrl: './cell-input.component.html',
+  styleUrls: ['./cell-input.component.scss']
 })
-export class AgGridMaterialTextEditorComponent implements OnInit, AgEditorComponent {
+export class CellInputComponent implements OnInit, AgEditorComponent {
     
   params: ICellEditorParams;
   private value: string;
@@ -52,7 +52,6 @@ export class AgGridMaterialTextEditorComponent implements OnInit, AgEditorCompon
   }
 
   getValue(): string {
-    console.log("this.value", this.value);
     return this.value;
   }
 

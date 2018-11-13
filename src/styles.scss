@@ -6,8 +6,8 @@
 @include mat-core();
 
 // using deeppurple-amber color combo: https://github.com/angular/material2/blob/master/src/lib/core/theming/prebuilt/deeppurple-amber.scss
-$primary: mat-palette($mat-deep-purple);
-$accent:  mat-palette($mat-amber, A200, A100, A400);
+$primary: mat-palette($mat-indigo);
+$accent:  mat-palette($mat-pink, A200, A100, A400);
 
 $theme: mat-light-theme($primary, $accent);
 
@@ -22,8 +22,8 @@ $theme: mat-light-theme($primary, $accent);
 $ag-mat-icons-path: "~ag-grid-community/src/styles/material-icons/";
 $ag-icons-path: "~ag-grid-community/src/styles/icons/";
 
-$grid-size: 4px; // 8 by default
-$icon-size: 12px; // 18 by default
+// $grid-size: 4px; // 8 by default
+// $icon-size: 12px; // 18 by default
 
 @import '~ag-grid-community/src/styles/ag-grid';
 

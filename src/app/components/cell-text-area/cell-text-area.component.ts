@@ -4,11 +4,11 @@ import {AgEditorComponent,} from 'ag-grid-angular';
 import {MatInput} from '@angular/material';
 
 @Component({
-  selector: 'app-ag-grid-material-textarea-editor',
-  templateUrl: './ag-grid-material-textarea-editor.component.html',
-  styleUrls: ['./ag-grid-material-textarea-editor.component.scss']
+  selector: 'app-cell-text-area',
+  templateUrl: './cell-text-area.component.html',
+  styleUrls: ['./cell-text-area.component.scss']
 })
-export class AgGridMaterialTextareaEditorComponent implements OnInit, AgEditorComponent {
+export class CellTextAreaComponent implements OnInit, AgEditorComponent {
   params: ICellEditorParams;
   private value: string;
   @ViewChild('input', {read: MatInput}) input;
