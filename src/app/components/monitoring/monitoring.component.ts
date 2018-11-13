@@ -47,7 +47,7 @@ export class MonitoringComponent implements AfterViewInit {
       var gridShouldDoNothing = params.editing && (keyCode===38 || keyCode===40);
       return gridShouldDoNothing;
     },
-    
+
     cellEditorFramework: CellSelectComponent,   valueSetter: (params) => this.valueSetter(params) };
   private readonly colDefBoolean: ColDef =     { cellRendererFramework: CellCheckboxComponent };
 

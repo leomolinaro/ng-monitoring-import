@@ -9,10 +9,12 @@ import { MatSelect } from "@angular/material";
   styleUrls: ['./cell-select.component.scss']
 })
 export class CellSelectComponent implements OnInit, AgEditorComponent {
+
   columnWidth: string;
   values: [ string ];
   params: ICellEditorParams;
-  private value: string;
+  value: string;
+
   @ViewChild('select', {read: MatSelect}) select: MatSelect;
 
   constructor() { }
@@ -20,34 +22,39 @@ export class CellSelectComponent implements OnInit, AgEditorComponent {
   ngOnInit() { }
 
   ngAfterViewInit() {
-      this.select.open();
+    this.select.open();
+    setTimeout(() => {
+      this.select.focus();
+    });
   }
 
   isPopup(): boolean {
-      return true;
+    return true;
   }
 
   isCancelBeforeStart(): boolean {
-      return false;
+    return false;
   }
 
   isCancelAfterEnd(): boolean {
-      return false;
+    console.log("CIAO");
+    return false;
   }
 
   agInit(params: any): void {
-      this.params = params;
-      this.columnWidth = params.column.actualWidth + "px";
-      this.values = params.values;
-      this.value = params.value;
+    this.params = params;
+    this.columnWidth = params.column.actualWidth + "px";
+    this.values = params.values;
+    this.value = params.value;
   }
 
   getValue(): string {
-      return this.value;
+    return this.value;
   }
 
-  onSelectChange(e): void {
-      this.params.stopEditing();
-  }
+  // onSelectChange(e): void {
+  //   console.log("e", e);
+  //   this.params.stopEditing();
+  // }
 
 }
