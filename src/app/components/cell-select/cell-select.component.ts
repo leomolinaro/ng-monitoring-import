@@ -37,7 +37,7 @@ export class CellSelectComponent implements OnInit, AgEditorComponent {
   }
 
   isCancelAfterEnd(): boolean {
-    console.log("CIAO");
+    console.log("isCancelAfterEnd", this.value);
     return false;
   }
 
@@ -49,6 +49,7 @@ export class CellSelectComponent implements OnInit, AgEditorComponent {
   }
 
   getValue(): string {
+    console.log("getValue", this.value);
     return this.value;
   }
 

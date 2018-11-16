@@ -1,7 +1,7 @@
 <mat-select
   #select
   (change)="onSelectChange($event)"
-  [(ngModel)]="value"
+  [(value)]="value"
   [style.width]="columnWidth">
   <mat-option *ngFor="let item of values" [value]="item">
     {{ item }}

@@ -39,17 +39,29 @@ export class MonitoringComponent implements AfterViewInit {
     getRowNodeId: row => row.id
   };
 
-  private readonly colDefString: ColDef =      { cellEditorFramework: CellInputComponent,     valueSetter: (params) => this.valueSetter(params) };
-  private readonly colDefLongString: ColDef =  { cellEditorFramework: CellTextAreaComponent,     valueSetter: (params) => this.valueSetter(params) };
-  private readonly colDefSelect: ColDef =      { 
+  private readonly colDefString: ColDef = {
+    cellEditorFramework: CellInputComponent,
+    valueSetter: (params) => this.valueSetter(params)
+  };
+
+  private readonly colDefLongString: ColDef = {
+    cellEditorFramework: CellTextAreaComponent,
+    valueSetter: (params) => this.valueSetter(params)
+  };
+
+  private readonly colDefSelect: ColDef = { 
     suppressKeyboardEvent: (params) => {
       var keyCode = params.event.keyCode;
       var gridShouldDoNothing = params.editing && (keyCode===38 || keyCode===40);
       return gridShouldDoNothing;
     },
+    cellEditorFramework: CellSelectComponent,
+    valueSetter: (params) => this.valueSetter(params)
+  };
 
-    cellEditorFramework: CellSelectComponent,   valueSetter: (params) => this.valueSetter(params) };
-  private readonly colDefBoolean: ColDef =     { cellRendererFramework: CellCheckboxComponent };
+  private readonly colDefBoolean: ColDef = {
+    cellRendererFramework: CellCheckboxComponent
+  };
 
   gridOptionsAll = { ...this.gridOptions };
   gridOptionsBasic = { ...this.gridOptions };
@@ -64,7 +76,7 @@ export class MonitoringComponent implements AfterViewInit {
   colDefsNetIntBasic: (ColDef | ColGroupDef)[];
   colDefsNetIntMedium: (ColDef | ColGroupDef)[];
   
-  valueSetter(params: ValueSetterParams): boolean {
+  valueSetter(params: ValueSetterParams): boolean { console.log("valueSetter", params.newValue);
     const field = params.colDef.field;
     const value = params.newValue;
     const host: Host = params.data;
@@ -91,9 +103,9 @@ export class MonitoringComponent implements AfterViewInit {
       { headerName: 'Note',         field: 'note',        editable: true,   pinned: null,   ...this.colDefLongString },
       { headerName: 'Basic',        field: 'basic',       editable: false,  pinned: null,   ...this.colDefBoolean },
       { headerName: 'Network Device', children: [
-        { headerName: 'Network Device\nBasic', field: 'networkInterface_basic',   editable: false,  pinned: null,   ...this.colDefBoolean },
-        { headerName: 'Medium', field: 'networkInterface_medium',   editable: false,  pinned: null,   ...this.colDefBoolean },
-        { headerName: 'Interfaces', field: 'networkInterface_interfaces',   editable: false,  pinned: null,   ...this.colDefBoolean },
+        { headerName: 'Network Device\nBasic', field: 'networkInterfaceBasic',   editable: false,  pinned: null,   ...this.colDefBoolean },
+        { headerName: 'Medium', field: 'networkInterfaceMedium',   editable: false,  pinned: null,   ...this.colDefBoolean },
+        { headerName: 'Interfaces', field: 'networkInterfaceInterfaces',   editable: false,  pinned: null,   ...this.colDefBoolean },
       ] },           
       { headerName: 'T3',           field: 'template3',   editable: false,  pinned: null,   ...this.colDefBoolean },
     ];
@@ -117,7 +129,7 @@ export class MonitoringComponent implements AfterViewInit {
     ];
     this.rowsAll$ = this.store.select(fromHosts.selectHosts);
     this.rowsBasic$ = this.rowsAll$.pipe(map(hosts => hosts.filter(host => host.basic)));
-    this.rowsNetIntBasic$ = this.rowsAll$.pipe(map(hosts => hosts.filter(host => host.networkInterface_basic)));
+    this.rowsNetIntBasic$ = this.rowsAll$.pipe(map(hosts => hosts.filter(host => host.networkInterfaceBasic)));
     this.rowsNetIntMedium$ = this.rowsAll$.pipe(map(hosts => hosts.filter(host => host.template3)));
   }
 
@@ -133,9 +145,9 @@ export class MonitoringComponent implements AfterViewInit {
       basic: true,
       ip: "",
       name: "",
-      networkInterface_basic: false,
-      networkInterface_interfaces: false,
-      networkInterface_medium: false,
+      networkInterfaceBasic: false,
+      networkInterfaceInterfaces: false,
+      networkInterfaceMedium: false,
       template1_macro1: "",
       template1_macro2: 0,
       template2_macro1: "",
