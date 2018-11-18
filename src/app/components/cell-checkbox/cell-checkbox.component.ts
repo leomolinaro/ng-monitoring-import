@@ -4,7 +4,7 @@ import { ICellRendererParams } from "ag-grid-community";
 import { MatCheckbox, MatCheckboxChange } from '@angular/material';
 
 export interface ICheckboxCellRendererParams extends ICellRendererParams {
-  getDisabled?: (params: ICheckboxCellRendererParams) => boolean,
+  getHide?: (params: ICheckboxCellRendererParams) => boolean,
   onCheckboxChange: (newValue: boolean, params: ICheckboxCellRendererParams) => void
 }
 
@@ -19,10 +19,10 @@ export class CellCheckboxComponent implements OnInit, AgRendererComponent {
 
   private params: ICheckboxCellRendererParams;
   
-  private checked = false;
-  private disabled = false;
+  checked = false;
+  hide = false;
 
-  refresh(params: any): boolean {
+  refresh(): boolean {
     this.refreshDisabled();
     return true;
   }
@@ -36,8 +36,8 @@ export class CellCheckboxComponent implements OnInit, AgRendererComponent {
   }
 
   refreshDisabled() {
-    if (this.params.getDisabled) {
-      this.disabled = this.params.getDisabled(this.params);
+    if (this.params.getHide) {
+      this.hide = this.params.getHide(this.params);
     }
   }
 
@@ -48,7 +48,6 @@ export class CellCheckboxComponent implements OnInit, AgRendererComponent {
 
   onChange(event: MatCheckboxChange) {
     const newValue = event.checked;
-    const oldValue = !newValue;
     this.checked = newValue;
     this.params.onCheckboxChange(newValue, this.params);
   }

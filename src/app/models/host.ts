@@ -1,4 +1,4 @@
-export const hostTypes = ["AP", "Router", "Switch", "TVCC", "Server", "WiFi Controller", "Bridge Radio", "UPS", "Sensor", "PABX", "Firewall"];
+export const hostTypes: HostType[] = ["AP", "Router", "Switch", "TVCC", "Server", "WiFi Controller", "Bridge Radio", "UPS", "Sensor", "PABX", "Firewall"];
 
 export type HostType = "AP" | "Router" | "Switch" | "TVCC" | "Server" | "WiFi Controller" | "Bridge Radio" | "UPS" | "Sensor" | "PABX" | "Firewall";
 
@@ -7,15 +7,30 @@ export interface Host {
   ip: string,
   name: string,
   type: HostType,
-  basic: boolean,
-  networkInterfaceBasic: boolean,
-  networkInterfaceMedium: boolean,
-  networkInterfaceInterfaces: boolean,
-  template3: boolean,
-  template1_macro1: string,
-  template1_macro2: number,
-  template2_macro1: string,
-  template3_macro1: string,
-  template3_macro2: string,
-  template3_macro3: string,
+
+  pingBasic?: boolean,
+  pingBasicDowntime?: number,
+  pingBasicSLA?: string,
+  pingBasicActionWorkingHours?: string,
+  pingBasicActionRestHours?: string,
+  pingBasicMessage?: string,
+
+  networkDeviceBasic?: boolean,
+  networkDeviceBasicSLA?: string,
+  networkDeviceBasicActionWorkingHours?: string,
+  networkDeviceBasicActionRestHours?: string,
+  networkDeviceBasicMessage?: string,
+
+  networkDeviceMedium?: boolean,
+  networkDeviceMediumCPUMaxUtil?: string,
+  networkDeviceMediumCPUSLA?: string,
+  networkDeviceMediumRAMMaxUtil?: string,
+  networkDeviceMediumRAMSLA?: string,
+  networkDeviceMediumPSUSLA?: string,
+  networkDeviceMediumFanSLA?: string,
+  networkDeviceMediumTemperatureSLA?: string,
+  networkDeviceMediumActionRestHours?: string,
+  networkDeviceMediumMessage?: string,
+
+  networkInterfaceInterfaces?: boolean,
 }

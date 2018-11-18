@@ -1,3 +1,5 @@
+import { Template } from './../../models/template';
+import { ICheckboxCellRendererParams } from './../cell-checkbox/cell-checkbox.component';
 import { TemplateDefinitionsService } from './../../services/template-definitions.service';
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { BreakpointObserver, Breakpoints, BreakpointState } from '@angular/cdk/layout';
@@ -31,6 +33,12 @@ interface TemplateView {
 })
 export class MonitoringComponent implements OnInit, AfterViewInit {
 
+  gridOptionsAll = { ...this.gridOptions };
+  rowsAll$: Observable<Host[]>;
+  colDefsAll: (ColDef | ColGroupDef)[];
+  @ViewChild("generalGrid") generalGrid: AgGridNg2;
+  templateViews: TemplateView[] = [];
+  openPanel = "general";
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
     .pipe(map(result => result.matches));
   
@@ -66,15 +74,11 @@ export class MonitoringComponent implements OnInit, AfterViewInit {
   };
 
   private readonly colDefBoolean: ColDef = {
-    cellRendererFramework: CellCheckboxComponent
+    cellRendererFramework: CellCheckboxComponent,
+    cellRendererParams: {
+      onCheckboxChange: (checked: boolean, params: ICellRendererParams) => this.booleanValueSetter(checked, params)
+    }
   };
-
-  gridOptionsAll = { ...this.gridOptions };
-  rowsAll$: Observable<Host[]>;
-  colDefsAll: (ColDef | ColGroupDef)[];
-  @ViewChild("generalGrid") generalGrid: AgGridNg2;
-  templateViews: TemplateView[] = [];
-  openPanel = 0;
 
   valueSetter(params: ValueSetterParams): boolean {
     const field = params.colDef.field;
@@ -85,11 +89,15 @@ export class MonitoringComponent implements OnInit, AfterViewInit {
     return params.oldValue != params.newValue;
   }
   
-  onCheckboxChange(checked: boolean, params: ICellRendererParams) {
+  booleanValueSetter(checked: boolean, params: ICellRendererParams) {
     const field = params.colDef.field;
     const host: Host = params.data;
     const hostId = host.id;
     this.updateHost(hostId, field, checked);
+  }
+
+  areTpyeTemplateCompatible(type: HostType, template: Template) {
+    return template.hostTypes.includes(type);
   }
 
   ngOnInit() {
@@ -99,12 +107,10 @@ export class MonitoringComponent implements OnInit, AfterViewInit {
     this.colDefsAll = [
       { headerName: 'IP',           field: 'ip',          editable: true,   pinned: 'left', ...this.colDefString },
       { headerName: 'Name',         field: 'name',        editable: true,   pinned: 'left', ...this.colDefString },
-      { headerName: 'Type',         field: 'type',        editable: true,   pinned: 'left', ...this.colDefSelect,
+      {
+        headerName: 'Type',         field: 'type',        editable: true,   pinned: 'left', ...this.colDefSelect,
         cellEditorParams: { values: hostTypes },
-        onCellValueChanged: function(params: CellValueChangedEvent) {
-          console.log("onCellValueChanged");
-          params.api.refreshCells({ rowNodes: [params.node], force: true });
-        }
+        onCellValueChanged: (params: CellValueChangedEvent) => params.api.refreshCells({ rowNodes: [params.node], force: true })
       },
       { headerName: 'Description',  field: 'description', editable: true, ...this.colDefString },
       { headerName: 'Note',         field: 'note',        editable: true, ...this.colDefLongString }
@@ -115,19 +121,15 @@ export class MonitoringComponent implements OnInit, AfterViewInit {
       const children: ColDef[] = [];
       for (const template of templateGroup.templates) {
         const colDef: ColDef = {
-          headerName: template.label, field: template.field, editable: false, pinned: null,
+          headerName: template.label, field: template.field, editable: false,
           ...this.colDefBoolean,
-          
           cellRendererParams: {
-            onCheckboxChange: (checked: boolean, params: ICellRendererParams) => this.onCheckboxChange(checked, params),
-            getDisabled: function(params: ICellRendererParams) {
-              console.log(params.node.data.hostType, params.column.getColDef().field);
-              return true;
-            }
+            ...this.colDefBoolean.cellRendererParams,
+            getHide: (params: ICellRendererParams) => !this.areTpyeTemplateCompatible(params.node.data.type, template)
           }
         };
         children.push(colDef);
-        this.templateViews.push({
+        const templateView: TemplateView = {
           id: template.field,
           panelName: templateGroup.label + " - " + template.label,
           gridOptions: { ...this.gridOptions },
@@ -135,8 +137,18 @@ export class MonitoringComponent implements OnInit, AfterViewInit {
             { headerName: 'IP', field: 'ip', editable: false, pinned: 'left', ...this.colDefString },
             { headerName: 'Name', field: 'name', editable: false, pinned: 'left', ...this.colDefString },
           ],
-          rows$: this.rowsAll$.pipe(map(hosts => hosts.filter(host => host[template.field])))
-        });
+          rows$: this.rowsAll$
+            .pipe(
+              map(hosts => 
+                hosts.filter(host => host[template.field] && this.areTpyeTemplateCompatible(host.type, template))
+              )
+            )
+        };
+        for (const macro of template.macros) {
+          const macroColDef: ColDef = { headerName: macro.label, field: macro.field, editable: true, ...this.colDefString };
+          templateView.colDefs.push(macroColDef);
+        }
+        this.templateViews.push(templateView);
       }
       const colGroupDef: ColGroupDef = { headerName: templateGroup.label, children: children }
       this.colDefsAll.push(colGroupDef);
@@ -156,20 +168,10 @@ export class MonitoringComponent implements OnInit, AfterViewInit {
   addHost() {
     this.store.dispatch(new AddHost({ host: {
       id: null,
-      basic: true,
       ip: "",
       name: "",
-      networkInterfaceBasic: false,
-      networkInterfaceInterfaces: false,
-      networkInterfaceMedium: false,
-      template1_macro1: "",
-      template1_macro2: 0,
-      template2_macro1: "",
-      template3: false,
-      template3_macro1: "",
-      template3_macro2: "",
-      template3_macro3: "",
-      type: null
+      type: null,
+      pingBasic: true,
     } }));
     this.launchAutoSize();
   }

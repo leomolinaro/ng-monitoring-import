@@ -1,5 +1,6 @@
 import { TemplateGroup } from './../models/template-group';
 import { Injectable } from '@angular/core';
+import { hostTypes as allHostTypes } from '../models/host';
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +24,7 @@ export class TemplateDefinitionsService {
               { label: "Action night-weekend", field: "pingBasicActionRestHours" },
               { label: "Message", field: "pingBasicMessage" },
             ],
-            hostTypes: []
+            hostTypes: allHostTypes
           }
         ]
       },
@@ -39,7 +40,7 @@ export class TemplateDefinitionsService {
               { label: "Action night-weekend", field: "networkDeviceBasicActionRestHours" },
               { label: "Message", field: "networkDeviceBasicMessage" },
             ],
-            hostTypes: []
+            hostTypes: ["Switch", "AP", "Server"]
           },
           {
             label: "Medium",
@@ -55,7 +56,7 @@ export class TemplateDefinitionsService {
               { label: "Action night-weekend", field: "networkDeviceMediumActionRestHours" },
               { label: "Message", field: "networkDeviceMediumMessage" },
             ],
-            hostTypes: []
+            hostTypes: ["Server"]
           },
           {
             label: "Interfaces",

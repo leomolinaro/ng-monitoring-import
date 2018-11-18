@@ -1,6 +1,6 @@
 <mat-checkbox
+  *ngIf="!hide"
   #checkbox
   (change)="onChange($event)"
-  [checked]="checked"
-  [disabled]="disabled">
+  [checked]="checked">
 </mat-checkbox>
