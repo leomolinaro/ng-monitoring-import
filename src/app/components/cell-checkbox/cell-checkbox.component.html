@@ -1,5 +1,6 @@
 <mat-checkbox
   #checkbox
-  (change)="toggleSelection($event)"
-  [checked]="checked">
+  (change)="onChange($event)"
+  [checked]="checked"
+  [disabled]="disabled">
 </mat-checkbox>

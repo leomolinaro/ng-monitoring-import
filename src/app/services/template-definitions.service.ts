@@ -22,7 +22,8 @@ export class TemplateDefinitionsService {
               { label: "Action 07-20 mon-fri" , field: "pingBasicActionWorkingHours" },
               { label: "Action night-weekend", field: "pingBasicActionRestHours" },
               { label: "Message", field: "pingBasicMessage" },
-            ]
+            ],
+            hostTypes: []
           }
         ]
       },
@@ -37,7 +38,8 @@ export class TemplateDefinitionsService {
               { label: "Action 07-20 mon-fri" , field: "networkDeviceBasicActionWorkingHours" },
               { label: "Action night-weekend", field: "networkDeviceBasicActionRestHours" },
               { label: "Message", field: "networkDeviceBasicMessage" },
-            ]
+            ],
+            hostTypes: []
           },
           {
             label: "Medium",
@@ -52,7 +54,8 @@ export class TemplateDefinitionsService {
               { label: "Temperature SLA", field: "networkDeviceMediumTemperatureSLA" },
               { label: "Action night-weekend", field: "networkDeviceMediumActionRestHours" },
               { label: "Message", field: "networkDeviceMediumMessage" },
-            ]
+            ],
+            hostTypes: []
           },
           {
             label: "Interfaces",
@@ -62,7 +65,8 @@ export class TemplateDefinitionsService {
               { label: "Action 07-20 mon-fri" , field: "networkDeviceInterfacesActionWorkingHours" },
               { label: "Action night-weekend", field: "networkDeviceInterfacesActionRestHours" },
               { label: "Message", field: "networkDeviceInterfacesMessage" },
-            ]
+            ],
+            hostTypes: []
           }
         ]
       }

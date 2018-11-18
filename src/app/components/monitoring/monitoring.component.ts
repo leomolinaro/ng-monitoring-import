@@ -3,8 +3,8 @@ import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { BreakpointObserver, Breakpoints, BreakpointState } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
-import { GridOptions, ICellRendererParams, ColDef, ColGroupDef, ValueSetterParams } from 'ag-grid-community';
-import { Host, hostTypes } from '../../models/host';
+import { GridOptions, ICellRendererParams, ColDef, ColGroupDef, ValueSetterParams, ICellEditorParams, CellValueChangedEvent } from 'ag-grid-community';
+import { Host, hostTypes, HostType } from '../../models/host';
 import { UpdateHost, AddHost } from '../../store/hosts.actions';
 import { Store } from '@ngrx/store';
 import { HostsState } from '../../store/hosts.reducer';
@@ -32,9 +32,7 @@ interface TemplateView {
 export class MonitoringComponent implements OnInit, AfterViewInit {
 
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
-    .pipe(
-      map(result => result.matches)
-    );
+    .pipe(map(result => result.matches));
   
   private readonly gridOptions: GridOptions = {
     enableSorting: true,
@@ -44,7 +42,6 @@ export class MonitoringComponent implements OnInit, AfterViewInit {
     animateRows: true,
     // onCellValueChanged: (event: CellValueChangedEvent) => this.dispatchUpdate(event),
     deltaRowDataMode: true,
-    context: { onCheckboxChange: (checked: boolean, params: ICellRendererParams) => this.onCheckboxChange(checked, params) },
     getRowNodeId: row => row.id
   };
 
@@ -73,23 +70,13 @@ export class MonitoringComponent implements OnInit, AfterViewInit {
   };
 
   gridOptionsAll = { ...this.gridOptions };
-  // gridOptionsBasic = { ...this.gridOptions };
-  // gridOptionsNetIntBasic = { ...this.gridOptions };
-  // gridOptionsNetIntMedium = { ...this.gridOptions };
   rowsAll$: Observable<Host[]>;
-  rowsBasic$: Observable<Host[]>;
-  rowsNetIntBasic$: Observable<Host[]>;
-  rowsNetIntMedium$: Observable<Host[]>;
   colDefsAll: (ColDef | ColGroupDef)[];
-  colDefsBasic: (ColDef | ColGroupDef)[];
-  colDefsNetIntBasic: (ColDef | ColGroupDef)[];
-  colDefsNetIntMedium: (ColDef | ColGroupDef)[];
   @ViewChild("generalGrid") generalGrid: AgGridNg2;
-
   templateViews: TemplateView[] = [];
   openPanel = 0;
 
-  valueSetter(params: ValueSetterParams): boolean { console.log("valueSetter", params.newValue);
+  valueSetter(params: ValueSetterParams): boolean {
     const field = params.colDef.field;
     const value = params.newValue;
     const host: Host = params.data;
@@ -112,16 +99,33 @@ export class MonitoringComponent implements OnInit, AfterViewInit {
     this.colDefsAll = [
       { headerName: 'IP',           field: 'ip',          editable: true,   pinned: 'left', ...this.colDefString },
       { headerName: 'Name',         field: 'name',        editable: true,   pinned: 'left', ...this.colDefString },
-      { headerName: 'Type',         field: 'type',        editable: true,   pinned: 'left', ...this.colDefSelect, cellEditorParams: { values: hostTypes } },
-      { headerName: 'Description',  field: 'description', editable: true,   pinned: null,   ...this.colDefString },
-      { headerName: 'Note',         field: 'note',        editable: true,   pinned: null,   ...this.colDefLongString }
+      { headerName: 'Type',         field: 'type',        editable: true,   pinned: 'left', ...this.colDefSelect,
+        cellEditorParams: { values: hostTypes },
+        onCellValueChanged: function(params: CellValueChangedEvent) {
+          console.log("onCellValueChanged");
+          params.api.refreshCells({ rowNodes: [params.node], force: true });
+        }
+      },
+      { headerName: 'Description',  field: 'description', editable: true, ...this.colDefString },
+      { headerName: 'Note',         field: 'note',        editable: true, ...this.colDefLongString }
     ];
 
     const templateGroups = this.templateDefs.get();
     for (const templateGroup of templateGroups) {
       const children: ColDef[] = [];
       for (const template of templateGroup.templates) {
-        const colDef: ColDef = { headerName: template.label, field: template.field, editable: false, pinned: null, ...this.colDefBoolean }
+        const colDef: ColDef = {
+          headerName: template.label, field: template.field, editable: false, pinned: null,
+          ...this.colDefBoolean,
+          
+          cellRendererParams: {
+            onCheckboxChange: (checked: boolean, params: ICellRendererParams) => this.onCheckboxChange(checked, params),
+            getDisabled: function(params: ICellRendererParams) {
+              console.log(params.node.data.hostType, params.column.getColDef().field);
+              return true;
+            }
+          }
+        };
         children.push(colDef);
         this.templateViews.push({
           id: template.field,
@@ -171,6 +175,7 @@ export class MonitoringComponent implements OnInit, AfterViewInit {
   }
 
   removeHosts() {
+    // TODO
     this.launchAutoSize()
   }
 

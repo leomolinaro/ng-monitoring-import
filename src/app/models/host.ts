@@ -1,10 +1,12 @@
 export const hostTypes = ["AP", "Router", "Switch", "TVCC", "Server", "WiFi Controller", "Bridge Radio", "UPS", "Sensor", "PABX", "Firewall"];
 
+export type HostType = "AP" | "Router" | "Switch" | "TVCC" | "Server" | "WiFi Controller" | "Bridge Radio" | "UPS" | "Sensor" | "PABX" | "Firewall";
+
 export interface Host {
   id: number,
   ip: string,
   name: string,
-  type: "AP" | "Router" | "Switch" | "TVCC" | "Server" | "WiFi Controller" | "Bridge Radio" | "UPS" | "Sensor" | "PABX" | "Firewall",
+  type: HostType,
   basic: boolean,
   networkInterfaceBasic: boolean,
   networkInterfaceMedium: boolean,
