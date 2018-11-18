@@ -1,0 +1,9 @@
+sistemare click select -> vedi ag grid documentazione angular material
+sistemare blur celle
+implementare remove
+disabilitare checkbox dei template dipendentemente dal tipo
+colonne delle macro e valori di default
+valori di default "collegati"
+menu miglioramenti: grasseto sezione corrente, struttura ad albero
+colori basic, medium, advanced
+colori allarmi

@@ -1,3 +1,4 @@
+import { TemplateDefinitionsService } from './../../services/template-definitions.service';
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { BreakpointObserver, Breakpoints, BreakpointState } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
@@ -15,12 +16,20 @@ import { CellTextAreaComponent } from '../cell-text-area/cell-text-area.componen
 import { CellCheckboxComponent } from '../cell-checkbox/cell-checkbox.component';
 import { CellSelectComponent } from '../cell-select/cell-select.component';
 
+interface TemplateView {
+  id: string,
+  panelName: string,
+  gridOptions: GridOptions,
+  colDefs: ColDef[],
+  rows$: Observable<Host[]> 
+}
+
 @Component({
   selector: 'monitoring',
   templateUrl: './monitoring.component.html',
-  styleUrls: ['./monitoring.component.css']
+  styleUrls: ['./monitoring.component.scss']
 })
-export class MonitoringComponent implements AfterViewInit {
+export class MonitoringComponent implements OnInit, AfterViewInit {
 
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
     .pipe(
@@ -64,9 +73,9 @@ export class MonitoringComponent implements AfterViewInit {
   };
 
   gridOptionsAll = { ...this.gridOptions };
-  gridOptionsBasic = { ...this.gridOptions };
-  gridOptionsNetIntBasic = { ...this.gridOptions };
-  gridOptionsNetIntMedium = { ...this.gridOptions };
+  // gridOptionsBasic = { ...this.gridOptions };
+  // gridOptionsNetIntBasic = { ...this.gridOptions };
+  // gridOptionsNetIntMedium = { ...this.gridOptions };
   rowsAll$: Observable<Host[]>;
   rowsBasic$: Observable<Host[]>;
   rowsNetIntBasic$: Observable<Host[]>;
@@ -75,7 +84,11 @@ export class MonitoringComponent implements AfterViewInit {
   colDefsBasic: (ColDef | ColGroupDef)[];
   colDefsNetIntBasic: (ColDef | ColGroupDef)[];
   colDefsNetIntMedium: (ColDef | ColGroupDef)[];
-  
+  @ViewChild("generalGrid") generalGrid: AgGridNg2;
+
+  templateViews: TemplateView[] = [];
+  openPanel = 0;
+
   valueSetter(params: ValueSetterParams): boolean { console.log("valueSetter", params.newValue);
     const field = params.colDef.field;
     const value = params.newValue;
@@ -92,48 +105,45 @@ export class MonitoringComponent implements AfterViewInit {
     this.updateHost(hostId, field, checked);
   }
 
-  constructor(
-    private breakpointObserver: BreakpointObserver,
-    private store: Store<HostsState>) {
+  ngOnInit() {
+
+    this.rowsAll$ = this.store.select(fromHosts.selectHosts);
+
     this.colDefsAll = [
       { headerName: 'IP',           field: 'ip',          editable: true,   pinned: 'left', ...this.colDefString },
       { headerName: 'Name',         field: 'name',        editable: true,   pinned: 'left', ...this.colDefString },
       { headerName: 'Type',         field: 'type',        editable: true,   pinned: 'left', ...this.colDefSelect, cellEditorParams: { values: hostTypes } },
       { headerName: 'Description',  field: 'description', editable: true,   pinned: null,   ...this.colDefString },
-      { headerName: 'Note',         field: 'note',        editable: true,   pinned: null,   ...this.colDefLongString },
-      { headerName: 'Basic',        field: 'basic',       editable: false,  pinned: null,   ...this.colDefBoolean },
-      { headerName: 'Network Device', children: [
-        { headerName: 'Network Device\nBasic', field: 'networkInterfaceBasic',   editable: false,  pinned: null,   ...this.colDefBoolean },
-        { headerName: 'Medium', field: 'networkInterfaceMedium',   editable: false,  pinned: null,   ...this.colDefBoolean },
-        { headerName: 'Interfaces', field: 'networkInterfaceInterfaces',   editable: false,  pinned: null,   ...this.colDefBoolean },
-      ] },           
-      { headerName: 'T3',           field: 'template3',   editable: false,  pinned: null,   ...this.colDefBoolean },
+      { headerName: 'Note',         field: 'note',        editable: true,   pinned: null,   ...this.colDefLongString }
     ];
-    this.colDefsBasic = [
-      { headerName: 'IP',           field: 'ip',               editable: false,   pinned: 'left',  ...this.colDefString },
-      { headerName: 'Name',         field: 'name',             editable: false,   pinned: 'left',  ...this.colDefString },
-      { headerName: 'Macro 1',      field: 'template1_macro1', editable: true,    pinned: null,    ...this.colDefString },
-      { headerName: 'Macro 2',      field: 'template1_macro2', editable: true,    pinned: null,    ...this.colDefString },
-    ];
-    this.colDefsNetIntBasic = [
-      { headerName: 'IP',           field: 'ip',                editable: false,   pinned: 'left',  ...this.colDefString },
-      { headerName: 'Name',         field: 'name',              editable: false,   pinned: 'left',  ...this.colDefString },
-      { headerName: 'Macro 1',      field: 'template2_macro1',  editable: true,    pinned: null,    ...this.colDefString },
-    ];
-    this.colDefsNetIntMedium = [
-      { headerName: 'IP',           field: 'ip',                editable: false,   pinned: 'left',  ...this.colDefString },
-      { headerName: 'Name',         field: 'name',              editable: false,   pinned: 'left',  ...this.colDefString },
-      { headerName: 'Macro 1',      field: 'template3_macro1',  editable: true,    pinned: null,    ...this.colDefString },
-      { headerName: 'Macro 1',      field: 'template3_macro2',  editable: true,    pinned: null,    ...this.colDefString },
-      { headerName: 'Macro 1',      field: 'template3_macro3',  editable: true,    pinned: null,    ...this.colDefString },
-    ];
-    this.rowsAll$ = this.store.select(fromHosts.selectHosts);
-    this.rowsBasic$ = this.rowsAll$.pipe(map(hosts => hosts.filter(host => host.basic)));
-    this.rowsNetIntBasic$ = this.rowsAll$.pipe(map(hosts => hosts.filter(host => host.networkInterfaceBasic)));
-    this.rowsNetIntMedium$ = this.rowsAll$.pipe(map(hosts => hosts.filter(host => host.template3)));
+
+    const templateGroups = this.templateDefs.get();
+    for (const templateGroup of templateGroups) {
+      const children: ColDef[] = [];
+      for (const template of templateGroup.templates) {
+        const colDef: ColDef = { headerName: template.label, field: template.field, editable: false, pinned: null, ...this.colDefBoolean }
+        children.push(colDef);
+        this.templateViews.push({
+          id: template.field,
+          panelName: templateGroup.label + " - " + template.label,
+          gridOptions: { ...this.gridOptions },
+          colDefs: [
+            { headerName: 'IP', field: 'ip', editable: false, pinned: 'left', ...this.colDefString },
+            { headerName: 'Name', field: 'name', editable: false, pinned: 'left', ...this.colDefString },
+          ],
+          rows$: this.rowsAll$.pipe(map(hosts => hosts.filter(host => host[template.field])))
+        });
+      }
+      const colGroupDef: ColGroupDef = { headerName: templateGroup.label, children: children }
+      this.colDefsAll.push(colGroupDef);
+    }
   }
 
-  @ViewChild("generalGrid") generalGrid: AgGridNg2;
+  constructor(
+    private breakpointObserver: BreakpointObserver,
+    private store: Store<HostsState>,
+    private templateDefs: TemplateDefinitionsService) {
+  }
 
   ngAfterViewInit() {
     this.launchAutoSize()

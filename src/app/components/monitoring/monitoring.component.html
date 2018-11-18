@@ -8,11 +8,8 @@
     [opened]="!(isHandset$ | async)">
     <!-- <mat-toolbar color="primary"></mat-toolbar> -->
     <mat-nav-list>
-      <a mat-list-item href="#" (click)="panelGeneral.open()">General</a>
-      <a mat-list-item href="#" (click)="panelBasic.open()">Basic</a>
-      <a mat-list-item href="#" (click)="panelNetIntBasic.open()">Network interface - basic</a>
-      <a mat-list-item href="#" (click)="panelNetIntMedium.open()">Network interface - medium</a>
-      <a mat-list-item href="#" (click)="panelNetIntAdvanced.open()">Network interface - advanced</a>
+      <a mat-list-item href="#" (click)="openPanel = 0">General</a>
+      <a *ngFor="let templateView of templateViews" mat-list-item href="#" (click)="openPanel = templateView.id">{{templateView.panelName}}</a>
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>
@@ -29,7 +26,7 @@
     </mat-toolbar>
     
     <mat-accordion multi="false">
-      <mat-expansion-panel expanded="true" #panelGeneral>
+      <mat-expansion-panel [expanded]="openPanel == 0">
         <mat-expansion-panel-header>
           <mat-panel-title>General</mat-panel-title>
         </mat-expansion-panel-header>
@@ -44,23 +41,11 @@
           [rowData]="rowsAll$ | async">
         </ag-grid-angular>
       </mat-expansion-panel>
-      <mat-expansion-panel #panelBasic>
+      <mat-expansion-panel *ngFor="let templateView of templateViews" [expanded]="openPanel == templateView.id">
         <mat-expansion-panel-header>
-          <mat-panel-title>Basic</mat-panel-title>
+          <mat-panel-title>{{templateView.panelName}}</mat-panel-title>
         </mat-expansion-panel-header>
-        <template-table [gridOptions]="gridOptionsBasic" [colDefs]="colDefsBasic" [rows]="rowsBasic$ | async"></template-table>
-      </mat-expansion-panel>
-      <mat-expansion-panel #panelNetIntBasic>
-        <mat-expansion-panel-header>
-          <mat-panel-title>Network Interface - Basic</mat-panel-title>
-        </mat-expansion-panel-header>
-        <template-table [gridOptions]="gridOptionsNetIntBasic" [colDefs]="colDefsNetIntBasic" [rows]="rowsNetIntBasic$ | async"></template-table>
-      </mat-expansion-panel>
-      <mat-expansion-panel #panelNetIntMedium>
-        <mat-expansion-panel-header>
-          <mat-panel-title>Network Interface - Medium</mat-panel-title>
-        </mat-expansion-panel-header>
-        <template-table [gridOptions]="gridOptionsNetIntMedium" [colDefs]="colDefsNetIntMedium" [rows]="rowsNetIntMedium$ | async"></template-table>
+        <template-table [gridOptions]="templateView.gridOptions" [colDefs]="templateView.colDefs" [rows]="templateView.rows$ | async"></template-table>
       </mat-expansion-panel>
     </mat-accordion>
 
