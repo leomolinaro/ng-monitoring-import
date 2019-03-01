@@ -32,43 +32,43 @@ import { CellTextAreaComponent } from './components/cell-text-area/cell-text-are
 import { CellSelectComponent } from './components/cell-select/cell-select.component';
 
 @NgModule({
-    declarations: [
-        AppComponent,
-        TemplateTableComponent,
-        MonitoringComponent,
-        CellCheckboxComponent,
-        CellInputComponent,
-        CellTextAreaComponent,
-        CellSelectComponent,
-    ],
-    imports: [
-        BrowserModule,
-        FormsModule,
-        AppRoutingModule,
-        BrowserAnimationsModule,
-        MatButtonModule,
-        MatCheckboxModule,
-        MatIconModule,
-        MatInputModule,
-        MatToolbarModule,
-        MatCardModule,
-        MatSelectModule,
-        MatDatepickerModule,
-        MatNativeDateModule,
-        MatExpansionModule,
-        AgGridModule.withComponents([
-          CellCheckboxComponent,
-          CellInputComponent,
-          CellTextAreaComponent,
-          CellSelectComponent
-        ]),
-        StoreModule.forRoot({ hosts: hostsReducer }),
-        LayoutModule,
-        MatSidenavModule,
-        MatListModule
-    ],
-    providers: [],
-    bootstrap: [AppComponent]
+  declarations: [
+    AppComponent,
+    TemplateTableComponent,
+    MonitoringComponent,
+    CellCheckboxComponent,
+    CellInputComponent,
+    CellTextAreaComponent,
+    CellSelectComponent,
+  ],
+  imports: [
+    BrowserModule,
+    FormsModule,
+    AppRoutingModule,
+    BrowserAnimationsModule,
+    MatButtonModule,
+    MatCheckboxModule,
+    MatIconModule,
+    MatInputModule,
+    MatToolbarModule,
+    MatCardModule,
+    MatSelectModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatExpansionModule,
+    AgGridModule.withComponents([
+      CellCheckboxComponent,
+      CellInputComponent,
+      CellTextAreaComponent,
+      CellSelectComponent
+    ]),
+    StoreModule.forRoot({ hosts: hostsReducer }),
+    LayoutModule,
+    MatSidenavModule,
+    MatListModule
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
 })
 export class AppModule {
 }

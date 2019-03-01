@@ -23,7 +23,7 @@ export class CellCheckboxComponent implements OnInit, AgRendererComponent {
   hide = false;
 
   refresh(): boolean {
-    this.refreshDisabled();
+    this.refreshHide();
     return true;
   }
 
@@ -32,10 +32,10 @@ export class CellCheckboxComponent implements OnInit, AgRendererComponent {
     const field = this.params.colDef.field;
     const row = this.params.data;
     this.checked = row[field];
-    this.refreshDisabled();
+    this.refreshHide();
   }
 
-  refreshDisabled() {
+  refreshHide() {
     if (this.params.getHide) {
       this.hide = this.params.getHide(this.params);
     }

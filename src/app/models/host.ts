@@ -32,5 +32,16 @@ export interface Host {
   networkDeviceMediumActionRestHours?: string,
   networkDeviceMediumMessage?: string,
 
-  networkInterfaceInterfaces?: boolean,
+  networkDeviceInterfaces?: boolean,
+  networkDeviceInterfacesSLA?: string,
+  networkDeviceInterfacesActionWorkingHours?: string,
+  networkDeviceInterfacesActionRestHours?: string,
+  networkDeviceInterfacesMessage?: string,
+
+  networkDeviceSTP?: boolean,
+  networkDeviceSTPSLA?: string,
+  networkDeviceSTPActionWorkingHours?: string,
+  networkDeviceSTPActionRestHours?: string,
+  networkDeviceSTPMessage?: string,
+
 }
